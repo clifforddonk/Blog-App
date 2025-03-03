@@ -1,27 +1,39 @@
 import bcrypt from "bcryptjs";
-import { createUser, getUserByEmail } from "@/models/user";
+import jwt from "jsonwebtoken";
+import { getUserByEmail } from "@/models/user";
 
 export async function POST(req) {
   try {
-    const { name, email, password } = await req.json();
+    const { email, password } = await req.json();
 
-    // Check if user already exists
-    const existingUser = await getUserByEmail(email);
-    if (existingUser) {
-      return new Response(JSON.stringify({ error: "User already exists" }), {
-        status: 400,
+    // Check if user exists
+    const user = await getUserByEmail(email);
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Invalid credentials" }), {
+        status: 401,
       });
     }
 
-    // Hash the password before storing
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return new Response(JSON.stringify({ error: "Invalid credentials" }), {
+        status: 401,
+      });
+    }
 
-    // Create new user
-    const newUser = await createUser({ name, email, password: hashedPassword });
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     return new Response(
-      JSON.stringify({ message: "Signup successful", user: newUser }),
-      { status: 201 }
+      JSON.stringify({ message: "Login successful", token }),
+      { status: 200 }
     );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
