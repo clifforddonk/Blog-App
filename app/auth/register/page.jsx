@@ -4,18 +4,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
-import bcrypt from "bcryptjs";
 
 const SignUpForm = () => {
-  async function checkPassword() {
-    const hashedPassword =
-      "$2b$10$L/M45iETPUNOBzxPXQOkTOF/mSM9ezfhFZIDB7BnLEit8MAgrdZc6";
-    const plainPassword = "Nanakwesi-1";
-
-    const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
-    console.log(isMatch ? "Password matches!" : "Invalid password");
-  }
-
   checkPassword();
   const router = useRouter();
   const [formData, setFormData] = useState({
