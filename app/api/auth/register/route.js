@@ -7,10 +7,7 @@ export async function POST(req) {
 
     // Validate input fields
     if (!name || !email || !password) {
-      return new Response(
-        JSON.stringify({ error: "All fields are required" }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ error: "" }), { status: 400 });
     }
 
     // Check if user already exists
