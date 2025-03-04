@@ -18,7 +18,7 @@ const LoginForm = () => {
     e.preventDefault();
     setError("");
 
-    const result = await signIn("credentials", {
+    const result = await signIn("", {
       email: formData.email,
       password: formData.password,
       redirect: false,
